@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Data Process/XMLHttpRequest</title>
+</head>
+<body>
+    <script>
+        //XMLHttpRequest 객체를 생성하는 함수
+        function createRequest() {
+            var request;
+            try {
+                request = new XMLHttpRequest();
+            } catch (exception) {
+                try {
+                    request = new ActiveXObject('Msxml2.XMLHTTP');
+                } catch (innerException) {
+                    request = new ActiveXObject('Microsoft.XMLHTTP');
+                }
+            }
+            return request;
+        }
+
+        // XMLHttpRequest 객체 생성
+        var request = createRequest();
+        request.onreadystatechange = function (event) {
+            if (request.readyState == 4) {
+                if (request.status == 200) {
+                    // 데이터 가공
+                    var json = eval('(' + request.responseText + ')');
+                    var output = '';
+
+                    for (var i = 0; i < json.length; i++) {
+                        for (var key in json[i]) {
+                            output += '<h1>' + i + ':' + json[i][key] + '</h1>';
+                        }
+                    }
+                    document.body.innerHTML += output;
+                    
+                };
+            };
+        };
+        request.open('GET', '/data.json', true);
+        request.send();
+
+        //send()메서드에 소비되는 시간 측정
+        //var prevDate = new Date();
+        //ajax수행
+        //var nowDate = new Date();
+
+        //출력
+        //alert(nowDate - prevDate);
+
+    </script>
+    <form action="/products" method="get">
+        <fieldset>
+            <legend>GET</legend>
+            <input type="submit" value="쿼리요청"/>
+        </fieldset>
+    </form>
+    <form action="/products" method="post">
+        <fieldset>
+            <legend>POST</legend>
+            <input name="name" />
+            <input name="price" />
+            <input type="submit" value="쿼리요청" />
+        </fieldset>
+    </form>
+</body>
+</html>
